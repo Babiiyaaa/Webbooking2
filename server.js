@@ -1,3 +1,4 @@
+
 const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
@@ -10,10 +11,10 @@ app.use(express.static(path.join(__dirname, "public"))); // โฟลเดอ�
 
 // เชื่อมต่อ MySQL
 const conn = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "booking_db"
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "booking_db"
 });
 
 // สมัครสมาชิก
