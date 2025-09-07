@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<title>สมัครสมาชิก & จอง</title>
+<style>
+  /* รักษา CSS เดิม และเสริมเล็กน้อย */
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input, select, button { padding: 8px; margin: 5px 0; width: 100%; max-width: 300px; }
+  label { display: block; margin-top: 10px; }
+  .hidden { display: none; }
+  .container { max-width: 400px; margin-bottom: 40px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="register-container">
+  <h2>สมัครสมาชิก</h2>
+  <label>ชื่อจริง</label>
+  <input type="text" id="reg-firstname" />
+  <label>นามสกุล</label>
+  <input type="text" id="reg-lastname" />
+  <label>รหัสผ่าน</label>
+  <input type="password" id="reg-password" />
+  <label>ยืนยันรหัสผ่าน</label>
+  <input type="password" id="reg-password-confirm" />
+  <button onclick="register()">สมัครสมาชิก</button>
+  <p id="register-msg" style="color:red;"></p>
+</div>
+
+<div class="container" id="login-container">
+  <h2>เข้าสู่ระบบ</h2>
+  <label>ชื่อจริง</label>
+  <input type="text" id="login-firstname" />
+  <label>นามสกุล</label>
+  <input type="text" id="login-lastname" />
+  <label>รหัสผ่าน</label>
+  <input type="password" id="login-password" />
+  <button onclick="login()">ล็อกอิน</button>
+  <p id="login-msg" style="color:red;"></p>
+</div>
+
+<div class="container hidden" id="booking-container">
+  <h2>จอง</h2>
+  <p>ผู้ใช้: <span id="user-fullname"></span></p>
+
+  <label>เลือกประเภทการจอง</label>
+  <select id="booking-type" onchange="updateBookingForm()">
+    <option value="">-- กรุณาเลือก --</option>
+    <option value="meeting">จองห้องประชุม</option>
+    <option value="car">จองรถ</option>
+  </select>
+
+  <div id="meeting-form" class="hidden">
+    <label>เลือกห้องประชุม</label>
+    <select id="meeting-room" onchange="updateMeetingOptions()">
+      <option value="">-- เลือกห้อง --</option>
+      <option value="room1">ห้อง A</option>
+      <option value="room2">ห้อง B</option>
+    </select>
+
+    <label>รูปแบบห้องประชุม</label>
+    <select id="meeting-style">
+      <!-- ตัวเลือกจะแสดงตามห้อง -->
+    </select>
+
+    <label>จำนวนคนเข้าประชุม</label>
+    <input type="number" id="meeting-people" min="1" max="100" />
+  </div>
+
+  <div id="car-form" class="hidden">
+    <label>เลือกรถ</label>
+    <select id="car-select" onchange="updateCarDetails()">
+      <option value="">-- เลือกรถ --</option>
+      <option value="car1">Toyota Camry</option>
+      <option value="car2">Honda Civic</option>
+    </select>
+
+    <p>ทะเบียนรถ: <span id="car-plate"></span></p>
+  </div>
+</div>
+
+<script>
+  // ตัวอย่างข้อมูลผู้ใช้เก็บใน localStorage
+  function register() {
+    const firstname = document.getElementById('reg-firstname').value.trim();
+    const lastname = document.getElementById('reg-lastname').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const passwordConfirm = document.getElementById('reg-password-confirm').value;
+
+    const msg = document.getElementById('register-msg');
+    msg.textContent = '';
+
+    if (!firstname || !lastname || !password || !passwordConfirm) {
+      msg.textContent = 'กรุณากรอกข้อมูลให้ครบทุกช่อง';
+      return;
+    }
+    if (password !== passwordConfirm) {
+      msg.textContent = 'รหัสผ่านไม่ตรงกัน';
+      return;
+    }
+
+    // เก็บข้อมูลใน localStorage เป็น key = firstname+lastname (สมมติ)
+    const userKey = firstname.toLowerCase() + '_' + lastname.toLowerCase();
+    if (localStorage.getItem(userKey)) {
+      msg.textContent = 'ผู้ใช้มีอยู่แล้ว';
+      return;
+    }
+
+    const userData = { firstname, lastname, password };
+    localStorage.setItem(userKey, JSON.stringify(userData));
+    msg.style.color = 'green';
+    msg.textContent = 'สมัครสมาชิกสำเร็จ! กรุณาล็อกอิน';
+  }
+
+  function login() {
+    const firstname = document.getElementById('login-firstname').value.trim();
+    const lastname = document.getElementById('login-lastname').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    const msg = document.getElementById('login-msg');
+    msg.textContent = '';
+
+    if (!firstname || !lastname || !password) {
+      msg.textContent = 'กรุณากรอกข้อมูลให้ครบทุกช่อง';
+      return;
+    }
+
+    const userKey = firstname.toLowerCase() + '_' + lastname.toLowerCase();
+    const userDataStr = localStorage.getItem(userKey);
+    if (!userDataStr) {
+      msg.textContent = 'ไม่พบผู้ใช้';
+      return;
+    }
+    const userData = JSON.parse(userDataStr);
+    if (userData.password !== password) {
+      msg.textContent = 'รหัสผ่านไม่ถูกต้อง';
+      return;
+    }
+
+    // บันทึกสถานะล็อกอิน
+    localStorage.setItem('loggedInUser', userKey);
+
+    // แสดงหน้าจอง
+    showBooking(userData);
+  }
+
+  function showBooking(userData) {
+    document.getElementById('register-container').classList.add('hidden');
+    document.getElementById('login-container').classList.add('hidden');
+    document.getElementById('booking-container').classList.remove('hidden');
+
+    document.getElementById('user-fullname').textContent = userData.firstname + ' ' + userData.lastname;
+
+    // ถ้ามีข้อมูลการจองเก่า เก็บไว้ดึงแสดงได้ (ตัวอย่างข้ามไปก่อน)
+  }
+
+  function updateBookingForm() {
+    const type = document.getElementById('booking-type').value;
+    document.getElementById('meeting-form').classList.toggle('hidden', type !== 'meeting');
+    document.getElementById('car-form').classList.toggle('hidden', type !== 'car');
+  }
+
+  function updateMeetingOptions() {
+    const room = document.getElementById('meeting-room').value;
+    const styleSelect = document.getElementById('meeting-style');
+
+    styleSelect.innerHTML = ''; // เคลียร์ก่อน
+
+    if (room === 'room1') {
+      styleSelect.innerHTML = `
+        <option value="theater">รูปแบบโรงละคร</option>
+        <option value="boardroom">รูปแบบโต๊ะประชุม</option>
+      `;
+    } else if (room === 'room2') {
+      styleSelect.innerHTML = `
+        <option value="classroom">รูปแบบห้องเรียน</option>
+        <option value="u-shape">รูปแบบตัว U</option>
+      `;
+    } else {
+      styleSelect.innerHTML = `<option value="">-- เลือกรูปแบบ --</option>`;
+    }
+  }
+
+  function updateCarDetails() {
+    const car = document.getElementById('car-select').value;
+    const plate = document.getElementById('car-plate');
+
+    if (car === 'car1') {
+      plate.textContent = 'กข 1234 กรุงเทพมหานคร';
+    } else if (car === 'car2') {
+      plate.textContent = 'ขค 5678 เชียงใหม่';
+    } else {
+      plate.textContent = '-';
+    }
+  }
+
+  // ถ้าเปิดเพจแล้วมีสถานะล็อกอิน ให้แสดงหน้าจองเลย
+  window.onload = () => {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+      const userDataStr = localStorage.getItem(loggedInUser);
+      if (userDataStr) {
+        showBooking(JSON.parse(userDataStr));
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

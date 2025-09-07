@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>เข้าสู่ระบบ</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-form: #1e293b;
+      --primary-blue: #2563eb;
+      --primary-blue-light: #3b82f6;
+      --text-light: #e0eefe;
+    }
+    body {
+      background: var(--bg-dark);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-light);
+    }
+    .container {
+      background: var(--bg-form);
+      padding: 2.5rem 3rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 24px rgba(42, 82, 152, 0.8);
+      width: 350px;
+    }
+    h2 {
+      text-align: center;
+      color: var(--primary-blue-light);
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px var(--primary-blue);
+    }
+    input {
+      width: 100%;
+      margin: 0.5rem 0 1rem;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: none;
+      background-color: #334155;
+      color: var(--text-light);
+      font-size: 1rem;
+      box-shadow: inset 0 0 8px var(--primary-blue);
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+    input:focus {
+      background-color: var(--bg-dark);
+      box-shadow: 0 0 15px var(--primary-blue-light);
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+      color: var(--text-light);
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.7);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, var(--primary-blue-light), #60a5fa);
+      box-shadow: 0 8px 22px rgba(96, 165, 250, 0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>เข้าสู่ระบบ</h2>
+    <form id="loginForm">
+      <input name="username" placeholder="ชื่อผู้ใช้" required />
+      <input name="password" type="password" placeholder="รหัสผ่าน" required />
+      <button type="submit">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+
+  <script>
+  document.getElementById("loginForm").onsubmit = async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (result.success) {
+      // เก็บบทบาทไว้ใน sessionStorage เผื่อใช้ในหน้าถัดไป
+      sessionStorage.setItem("role", result.role);
+      location.href = result.redirect;
+    } else {
+      alert(result.message || "เข้าสู่ระบบไม่สำเร็จ");
+    }
+  };
+</script>
+
+</body>
+</html>

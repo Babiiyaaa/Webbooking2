@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>หน้าผู้ดูแลระบบ</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-form: #1e293b;
+      --primary-blue: #2563eb;
+      --primary-blue-light: #3b82f6;
+      --text-light: #e0eefe;
+      --header-bg: #184e63;
+      --btn-approve: #22c55e;
+      --btn-reject: #ef4444;
+      --btn-calendar: #2563eb;
+      --border-color: #334155;
+    }
+    body {
+      background: var(--bg-dark);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 80px 20px 20px 20px;
+      color: var(--text-light);
+      margin: 0;
+    }
+    h2 {
+      text-align: center;
+      color: var(--primary-blue-light);
+      text-shadow: 0 0 8px var(--primary-blue);
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-form);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(42, 82, 152, 0.8);
+    }
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      text-align: center;
+      color: var(--text-light);
+    }
+    th {
+      background: var(--header-bg);
+      color: var(--text-light);
+    }
+    tr:nth-child(even) {
+      background: #223152;
+    }
+    button {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 2px;
+      font-weight: 600;
+      color: var(--text-light);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .approve {
+      background: var(--btn-approve);
+    }
+    .approve:hover {
+      background: #16a34a;
+      box-shadow: 0 6px 16px rgba(22, 163, 74, 0.8);
+    }
+    .reject {
+      background: var(--btn-reject);
+    }
+    .reject:hover {
+      background: #dc2626;
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.8);
+    }
+    .calendar-btn {
+      background: var(--btn-calendar);
+      color: var(--text-light);
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.7);
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .calendar-btn:hover {
+      background: var(--primary-blue-light);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.9);
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: var(--header-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+    header img {
+      height: 40px;
+      width: auto;
+    }
+    header a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    header span {
+      margin-left: 15px;
+      color: var(--text-light);
+      font-size: 1.3rem;
+      font-weight: bold;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html">
+      <img src="https://yourdomain.com/path-to-logo.png" alt="เทศบาลตำบลบ้านคลอง" />
+      <span>เทศบาลตำบลบ้านคลอง</span>
+    </a>
+  </header>
+
+  <h2>📋 รายการจองทั้งหมด</h2>
+  <div style="text-align:center;">
+    <button class="calendar-btn" onclick="window.location.href='calendar.html'">ดูปฏิทินการจอง</button>
+  </div>
+  <table id="bookingTable" aria-label="รายการจอง">
+    <thead>
+      <tr>
+        <th>ชื่อผู้จอง</th>
+        <th>ประเภท</th>
+        <th>วันที่</th>
+        <th>เวลา</th>
+        <th>สถานะ</th>
+        <th>การจัดการ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let bookingsData = [];
+
+    async function loadBookings() {
+      const res = await fetch("/bookings");
+      bookingsData = await res.json();
+      const tbody = document.querySelector("#bookingTable tbody");
+      tbody.innerHTML = "";
+
+      bookingsData.forEach(b => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${b.name}</td>
+          <td>${b.type}</td>
+          <td>${b.date}</td>
+          <td>${b.time} - ${b.end_time}</td>
+          <td>${b.status}</td>
+          <td>
+            <button class="approve" onclick="updateStatus(${b.id}, 'approve')">อนุมัติ</button>
+            <button class="reject" onclick="updateStatus(${b.id}, 'reject')">ปฏิเสธ</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function updateStatus(id, action) {
+      const res = await fetch(`/${action}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const msg = await res.text();
+      alert(msg);
+      await loadBookings();
+    }
+
+    loadBookings();
+  </script>
+</body>
+</html>

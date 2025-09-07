@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "22": "^0.0.0",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "cloudflare": "^4.5.0",
+    "dotenv": "^17.2.2",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mysql2": "^3.14.4",
+    "path": "^0.12.7",
+    "pdfkit": "^0.17.1",
+    "sequelize": "^6.37.7"
+  }
+}

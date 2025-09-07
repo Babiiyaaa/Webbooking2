@@ -1,0 +1,77 @@
+body {
+  background-color: #2f3b4c;
+  color: #cbd3e0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding-left: 80px; /* เผื่อพื้นที่โลโก้ */
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background-color: #3b4a6b;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(90, 143, 210, 0.6);
+  width: 720px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+}
+
+input, select, textarea {
+  background-color: #1e2a42;
+  border: 1.5px solid #5a8fd2;
+  border-radius: 8px;
+  color: #cbd3e0;
+  padding: 10px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #8ea5c2;
+}
+
+button {
+  background-color: #5a8fd2;
+  color: #e6ebf5;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #4280d7;
+}
+
+.image-section {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(90, 143, 210, 0.5);
+  background-color: #3b4a6b;
+  color: #cbd3e0;
+}
+
+.image-section img {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: block;
+}
+
+.image-section p {
+  padding: 0.5rem 1rem 1rem 1rem;
+  font-size: 0.9rem;
+  color: #b0bedc;
+}
+
+h2 {
+  color: #cbd3e0;
+  margin-bottom: 1rem;
+}

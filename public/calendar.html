@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ปฏิทินการจอง</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #e0eefe;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #3b82f6;
+      text-shadow: 0 0 6px #2563eb;
+    }
+    #calendar {
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.5);
+    }
+    .fc-toolbar-title { color: #e0eefe; }
+    .fc-button { background: #2563eb; border: none; }
+    .fc-button:hover { background: #3b82f6; }
+  </style>
+</head>
+<body>
+  <h2>📅 ปฏิทินการจอง</h2>
+  <div id="calendar"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      const res = await fetch("/approved-bookings");
+      const bookings = await res.json();
+
+      console.log("✅ Approved bookings:", bookings);
+
+      const events = bookings.map(b => ({
+        title: `${b.name} (${b.type})`,
+        start: b.start,
+        end: b.end,
+        extendedProps: b
+      }));
+
+      console.log("📅 Events:", events);
+
+      const calendarEl = document.getElementById("calendar");
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        locale: "th",
+        events: events,
+        eventClick: function (info) {
+          const d = info.event.extendedProps;
+          alert(
+            `ผู้จอง: ${d.name}\nประเภท: ${d.type}\nเวลา: ${d.time}\nวัตถุประสงค์: ${d.purpose || '-'}`
+          );
+        }
+      });
+      calendar.render();
+    });
+  </script>
+</body>
+</html>

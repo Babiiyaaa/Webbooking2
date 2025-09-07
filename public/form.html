@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ฟอร์มจอง</title>
+  <style>
+    
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f172a; /* สีพื้นหลังเข้มๆ แบบ Stream */
+      color: #e0eefe;
+    }
+    /* Header styles */
+    header {
+      background-color: #184e63; /* สีเขียวเข้ม */
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      color: #e0eefe;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    /* Container layout */
+    .container {
+      display: flex;
+      gap: 30px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ฟอร์ม */
+    form#bookingForm {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #1e293b; /* สีพื้นฟอร์มเข้ม */
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(42, 82, 152, 0.5);
+      color: #cbd5e1;
+    }
+    form#bookingForm h2 {
+      margin-bottom: 16px;
+      color: #7dd3fc;
+      text-shadow: 0 0 8px #0ea5e9;
+    }
+    form#bookingForm input[type="text"],
+    form#bookingForm input[type="date"],
+    form#bookingForm input[type="time"],
+    form#bookingForm select,
+    form#bookingForm textarea {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      background-color: #334155;
+      color: #e0eefe;
+      box-shadow: inset 0 0 6px #2563eb;
+      transition: box-shadow 0.3s ease;
+    }
+    form#bookingForm input[type="text"]:focus,
+    form#bookingForm input[type="date"]:focus,
+    form#bookingForm input[type="time"]:focus,
+    form#bookingForm select:focus,
+    form#bookingForm textarea:focus {
+      box-shadow: 0 0 10px #3b82f6;
+      background-color: #1e293b;
+    }
+    form#bookingForm textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    form#bookingForm .note {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: -8px;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    /* ปุ่ม */
+    form#bookingForm button {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #e0eefe;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(59,130,246,0.6);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 15px;
+      width: fit-content;
+      font-weight: 600;
+    }
+    form#bookingForm button[type="button"] {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      box-shadow: 0 6px 12px rgba(239,68,68,0.6);
+      margin-left: 12px;
+    }
+    form#bookingForm button:hover {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      box-shadow: 0 8px 16px rgba(96,165,250,0.8);
+    }
+    form#bookingForm button[type="button"]:hover {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+      box-shadow: 0 8px 16px rgba(248,113,113,0.8);
+    }
+
+    /* Stream box style */
+    .stream-box {
+      background: linear-gradient(145deg, #1e3c72, #2a5298);
+      border-radius: 15px;
+      padding: 20px 30px;
+      box-shadow: 0 8px 24px rgba(42, 82, 152, 0.8);
+      color: #d1e3ff;
+      max-width: 400px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .stream-box h3 {
+      color: #bbd4ff;
+      margin-bottom: 8px;
+      text-shadow: 0 0 8px #7dafff;
+      font-weight: 700;
+    }
+    .stream-box p {
+      font-size: 14px;
+      line-height: 1.4;
+      color: #d1e3ffcc;
+      margin-bottom: 12px;
+    }
+    .stream-box label {
+      font-weight: 600;
+      color: #b0c9ff;
+      margin-bottom: 8px;
+      display: block;
+      text-shadow: 0 0 4px #7dafff;
+    }
+    .stream-box input[type="file"] {
+      background: #3b5998;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+    }
+    .stream-box input[type="file"]:hover {
+      background: #5a78cc;
+    }
+    .stream-box img {
+      border-radius: 12px;
+      box-shadow: 0 0 18px #6a90ff;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+      }
+      form#bookingForm, .stream-box {
+        max-width: 100%;
+      }
+      .stream-box {
+        margin-top: 20px;
+      }
+    }
+    
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <img src="" alt= >
+    เทศบาลตำบลบ้านคลอง
+  </header>
+
+  <div class="container">
+    <form id="bookingForm">
+      <h2>จองห้องประชุม / ยานพาหนะ</h2>
+      <input name="name" placeholder="ชื่อผู้จอง" required />
+      <select name="type" required>
+        <option value="" disabled selected>เลือกประเภทการจอง</option>
+        <option value="ห้องประชุมข้อมูลข่าวสารสนเทศ">ห้องประชุมข้อมูลข่าวสารสนเทศ</option>
+        <option value="ห้องประชุมมมณีจันทรา">ห้องประชุมมมณีจันทรา</option>
+        <option value="ห้องประชุมชั้น 3">ห้องประชุมชั้น 3</option>
+        <option value="ยานพาหนะ">ยานพาหนะ</option>
+        <option value="วาระนายก">วาระนายก</option>
+        <option value="วาระปลัด">วาระปลัด</option>
+      </select>
+
+      <!-- ตัวเลือกเพิ่มเติมจะแสดงที่นี่ -->
+      <div id="additionalOptions" style="margin-top: 10px;"></div>
+
+      <input type="date" name="date" required />
+      <input type="time" name="time" required />
+      <input type="time" name="end_time" required />
+      <textarea name="purpose" placeholder="วัตถุประสงค์" required></textarea>
+      <input name="equipment" placeholder="อุปกรณ์ที่ต้องการ (เช่น โปรเจ็กเตอร์ ไมโครโฟน)" />
+      <p class="note">* หากต้องการช่างภาพ กรุณาระบุในวัตถุประสงค์</p>
+      <div>
+        <button type="submit">ส่งคำขอ</button>
+        <button type="button" onclick="window.location.href='index.html'">ออกจากระบบ</button>
+      </div>
+    </form>
+
+    <div class="stream-box">
+      <h3>ตัวอย่างการจัดเตรียม</h3>
+      <img src="https://images.unsplash.com/photo-1531497865147-6a20f92e7c77?auto=format&fit=crop&w=400&q=80" alt="ตัวอย่างห้องประชุม" />
+      <p>ภาพตัวอย่างห้องประชุม เมื่อเลือกประเภทอื่น ระบบจะแสดงภาพตามหัวข้อ</p>
+      <label for="imageUpload">อัปโหลดรูปของคุณ (ถ้ามี)</label>
+      <input type="file" id="imageUpload" accept="image/*" />
+    </div>
+  </div>
+
+ <!-- ... โค้ดส่วนอื่นเหมือนเดิม -->
+
+<script>
+  const loggedInUser = sessionStorage.getItem("username") || "";
+
+  window.onload = () => {
+    const nameInput = document.querySelector('input[name="name"]');
+    if(loggedInUser){
+      nameInput.value = loggedInUser;
+      nameInput.readOnly = true;
+    }
+
+    const typeSelect = document.querySelector('select[name="type"]');
+    const additionalOptions = document.getElementById('additionalOptions');
+    const previewImg = document.querySelector('.stream-box img');
+
+    // ห้องประชุมที่ต้องมีตัวเลือกแบบห้อง
+    const meetingRooms = [
+      "ห้องประชุมข้อมูลข่าวสารสนเทศ",
+      "ห้องประชุมมมณีจันทรา",
+      "ห้องประชุมชั้น 3",
+      "ห้องประชุมชั้น 1"  // เพิ่มห้องชั้น 1 ด้วย
+    ];
+
+    // รูปภาพตามแบบห้อง (สมมติ URL หรือ path จริง)
+    const roomSetupImages = {
+      "รูปแบบ A": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80", // ตัวอย่างภาพรูปแบบ A
+      "รูปแบบ B": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=400&q=80", // ตัวอย่างภาพรูปแบบ B
+      "รูปแบบ C": "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=400&q=80", // ตัวอย่างภาพรูปแบบ C
+      "default": "https://images.unsplash.com/photo-1531497865147-6a20f92e7c77?auto=format&fit=crop&w=400&q=80"
+    };
+
+    typeSelect.addEventListener('change', () => {
+      const selected = typeSelect.value;
+      additionalOptions.innerHTML = "";
+
+      if (meetingRooms.includes(selected)) {
+        // แสดง dropdown แบบห้องประชุม
+        additionalOptions.innerHTML = `
+          <label for="roomSetup">เลือกแบบการจัดห้องประชุม:</label>
+          <select name="roomSetup" id="roomSetup" required>
+            <option value="" disabled selected>เลือกแบบห้อง</option>
+            <option value="รูปแบบ A">รูปแบบ A</option>
+            <option value="รูปแบบ B">รูปแบบ B</option>
+            <option value="รูปแบบ C">รูปแบบ C</option>
+          </select>
+        `;
+        // เริ่มต้นแสดงรูปภาพ default ของห้องประชุม
+        previewImg.src = roomSetupImages["default"];
+
+        // เพิ่ม event listener ให้กับ dropdown แบบห้อง
+        const roomSetupSelect = document.getElementById('roomSetup');
+        roomSetupSelect.addEventListener('change', () => {
+          const setup = roomSetupSelect.value;
+          if (roomSetupImages[setup]) {
+            previewImg.src = roomSetupImages[setup];
+          } else {
+            previewImg.src = roomSetupImages["default"];
+          }
+        });
+
+      } else if (selected === "ยานพาหนะ") {
+        additionalOptions.innerHTML = `
+          <label for="vehicle">เลือกยานพาหนะ:</label>
+          <select name="vehicle" id="vehicle" required>
+            <option value="" disabled selected>เลือกยานพาหนะ</option>
+            <option value="รถยนต์คันที่ 1">รถยนต์คันที่ 1</option>
+            <option value="รถยนต์คันที่ 2">รถยนต์คันที่ 2</option>
+            <option value="รถยนต์คันที่ 3">รถยนต์คันที่ 3</option>
+          </select>
+        `;
+        previewImg.src = "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=400&q=80";
+
+      } else {
+        previewImg.src = roomSetupImages["default"];
+      }
+    });
+
+    // พรีวิวรูปตอนอัปโหลด
+    document.getElementById('imageUpload').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // ส่งข้อมูลฟอร์ม
+  document.getElementById("bookingForm").onsubmit = async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    const res = await fetch("/book", { 
+      method: "POST", 
+      headers: { "Content-Type": "application/json" }, 
+      body: JSON.stringify(data) 
+    });
+    alert(await res.text());
+    e.target.reset();
+    document.querySelector('.stream-box img').src = "https://images.unsplash.com/photo-1531497865147-6a20f92e7c77?auto=format&fit=crop&w=400&q=80";
+    if(loggedInUser){
+      const nameInput = document.querySelector('input[name="name"]');
+      nameInput.value = loggedInUser;
+      nameInput.readOnly = true;
+    }
+    document.getElementById('additionalOptions').innerHTML = "";
+    document.querySelector('select[name="type"]').value = "";
+  };
+</script>
+</body>
+</html>
