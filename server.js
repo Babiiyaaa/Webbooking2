@@ -17,89 +17,38 @@ const conn = mysql.createConnection({
 });
 
 // สมัครสมาชิก
-// register endpoint
 app.post("/register", async (req, res) => {
-  const { first_name, last_name, email, password, confirm_password } = req.body;
+  const { username, email, password } = req.body;
 
-  if (!first_name || !last_name || !email || !password || !confirm_password) {
+  if (!username || !email || !password) {
     return res.status(400).json({ success: false, message: "กรอกข้อมูลให้ครบ" });
   }
 
-  if (password !== confirm_password) {
-    return res.status(400).json({ success: false, message: "รหัสผ่านไม่ตรงกัน" });
-  }
-
-  conn.query(
-    "SELECT * FROM users WHERE email = ?", 
-    [email], 
-    async (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ success: false, message: "เกิดข้อผิดพลาด" });
-      }
-
-      if (results.length > 0) {
-        return res.status(400).json({ success: false, message: "อีเมลนี้มีอยู่แล้ว" });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      conn.query(
-        "INSERT INTO users (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, 'user')",
-        [first_name, last_name, email, hashedPassword],
-        (err2) => {
-          if (err2) {
-            console.error(err2);
-            return res.status(500).json({ success: false, message: "สมัครไม่สำเร็จ" });
-          }
-
-          res.json({ success: true, redirect: "/login.html" });
-        }
-      );
+  conn.query("SELECT * FROM users WHERE username = ?", [username], async (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "เกิดข้อผิดพลาด" });
     }
-  );
-});
 
-// login endpoint
-app.post("/login", (req, res) => {
-  const { first_name, last_name, password } = req.body;
-
-  if (!first_name || !last_name || !password) {
-    return res.status(400).json({ success: false, message: "กรอกข้อมูลให้ครบ" });
-  }
-
-  conn.query(
-    "SELECT * FROM users WHERE first_name = ? AND last_name = ?", 
-    [first_name, last_name], 
-    async (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ success: false, message: "เกิดข้อผิดพลาด" });
-      }
-
-      if (results.length === 0) {
-        return res.status(401).json({ success: false, message: "ไม่พบผู้ใช้" });
-      }
-
-      const user = results[0];
-
-      if (user.password.length > 20) {
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-          return res.status(401).json({ success: false, message: "รหัสผ่านไม่ถูกต้อง" });
-        }
-      } else {
-        if (password !== user.password) {
-          return res.status(401).json({ success: false, message: "รหัสผ่านไม่ถูกต้อง" });
-        }
-      }
-
-      const redirect = user.role === "admin" ? "/admin" : "/forms";
-
-      // เก็บ role ไว้ใน sessionStorage ฝั่ง client ด้วย (response)
-      res.json({ success: true, role: user.role, redirect });
+    if (results.length > 0) {
+      return res.status(400).json({ success: false, message: "ชื่อผู้ใช้นี้มีอยู่แล้ว" });
     }
-  );
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    conn.query(
+      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+      [username, email, hashedPassword],
+      (err2) => {
+        if (err2) {
+          console.error(err2);
+          return res.status(500).json({ success: false, message: "สมัครไม่สำเร็จ" });
+        }
+
+        res.json({ success: true, redirect: "/login.html" });
+      }
+    );
+  });
 });
 
 // โหลดหน้า froms.html (ชื่อฟอร์มจอง)

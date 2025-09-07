@@ -27,8 +27,8 @@
       box-shadow: 0 8px 20px rgba(37,99,235,0.5);
     }
     .fc-toolbar-title { color: #e0eefe; }
-    .fc-button { background: #2563eb; border: none; }
-    .fc-button:hover { background: #3b82f6; }
+    .fc-button { background: #ffea00; border: none; }
+    .fc-button:hover { background: #d1f54f; }
   </style>
 </head>
 <body>
@@ -42,14 +42,32 @@
 
       console.log("✅ Approved bookings:", bookings);
 
+      // ฟังก์ชันกำหนดสีตามประเภท
+      const getColorByType = (type) => {
+        const t = type.trim();
+
+        // ห้องประชุมทุกชั้น
+        if (t.includes("ห้องประชุม")) return "#1E90FF"; // Stream (Dodger Blue)
+
+        // วาระนายก
+        if (t.includes("วาระนายก")) return "#66023C"; // Tyrian Purple
+
+        // วาระปลัดเทศบาล
+        if (t.includes("วาระปลัด")) return "#FFD700"; // Gold
+
+        // ยานพาหนะทุกคัน
+        if (t.includes("ยานพาหนะ")) return "#228B22"; // Forest Green (เขียวเข้มแต่ไม่มาก)
+
+        return "#888"; // Default สีเทา
+      };
+
       const events = bookings.map(b => ({
         title: `${b.name} (${b.type})`,
         start: b.start,
         end: b.end,
+        color: getColorByType(b.type),
         extendedProps: b
       }));
-
-      console.log("📅 Events:", events);
 
       const calendarEl = document.getElementById("calendar");
       const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -59,7 +77,7 @@
         eventClick: function (info) {
           const d = info.event.extendedProps;
           alert(
-            `ผู้จอง: ${d.name}\nประเภท: ${d.type}\nเวลา: ${d.time}\nวัตถุประสงค์: ${d.purpose || '-'}`
+            `ผู้จอง: ${d.name}\nประเภท: ${d.type}\nเวลา: ${d.time} - ${d.end_time}\nวัตถุประสงค์: ${d.purpose || '-'}`
           );
         }
       });

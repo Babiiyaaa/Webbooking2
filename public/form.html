@@ -210,8 +210,10 @@
       <div id="additionalOptions" style="margin-top: 10px;"></div>
 
       <input type="date" name="date" required />
-      <input type="time" name="time" required />
-      <input type="time" name="end_time" required />
+      <label for="time">เวลาเริ่มงาน</label>
+      <input type="time" name="time" id="time" required />
+      <label for="end_time">เวลาสิ้นสุด</label>
+      <input type="time" name="end_time" id="end_time" required />
       <textarea name="purpose" placeholder="วัตถุประสงค์" required></textarea>
       <input name="equipment" placeholder="อุปกรณ์ที่ต้องการ (เช่น โปรเจ็กเตอร์ ไมโครโฟน)" />
       <p class="note">* หากต้องการช่างภาพ กรุณาระบุในวัตถุประสงค์</p>
