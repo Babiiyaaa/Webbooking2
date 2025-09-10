@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
@@ -14,7 +13,17 @@ const conn = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "booking_db"
+  database: process.env.DB_NAME || "booking_db",
+  port: process.env.DB_PORT || 3306  // เพิ่มพอร์ตเชื่อมต่อ
+});
+
+// เช็คการเชื่อมต่อฐานข้อมูล
+conn.connect((err) => {
+  if (err) {
+    console.error("Database connection failed:", err.stack);
+    return;
+  }
+  console.log("Connected to database.");
 });
 
 // สมัครสมาชิก
@@ -57,8 +66,7 @@ app.post("/register", async (req, res) => {
   });
 });
 
-
-// โหลดหน้า froms.html (ชื่อฟอร์มจอง)
+// โหลดหน้า forms.html (ชื่อฟอร์มจอง)
 app.get("/forms", (req, res) => {
   res.sendFile(path.join(__dirname, "public/form.html"));
 });
@@ -82,7 +90,7 @@ app.post("/login", (req, res) => {
     }
 
     const user = results[0];
-    
+
     // สมมติว่า รหัสผ่านที่เข้ารหัสจะมีความยาวมากกว่า 20 (bcrypt hash)
     if (user.password.length > 20) {
       // ถ้าเป็นรหัสผ่านเข้ารหัส
@@ -101,7 +109,6 @@ app.post("/login", (req, res) => {
     res.json({ success: true, role: user.role, redirect });
   });
 });
-
 
 // โหลดหน้าแรก
 app.get("/", (req, res) => {
@@ -204,4 +211,5 @@ app.post("/book", (req, res) => {
 });
 
 // เริ่มต้นเซิร์ฟเวอร์
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
