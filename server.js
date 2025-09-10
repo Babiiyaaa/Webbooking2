@@ -19,9 +19,9 @@ const conn = mysql.createConnection({
 
 // สมัครสมาชิก
 app.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, first_name, last_name, password } = req.body;
 
-  if (!username || !email || !password) {
+  if (!username || !first_name || !last_name || !password) {
     return res.status(400).json({ success: false, message: "กรอกข้อมูลให้ครบ" });
   }
 
@@ -35,22 +35,28 @@ app.post("/register", async (req, res) => {
       return res.status(400).json({ success: false, message: "ชื่อผู้ใช้นี้มีอยู่แล้ว" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    conn.query(
-      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-      [username, email, hashedPassword],
-      (err2) => {
-        if (err2) {
-          console.error(err2);
-          return res.status(500).json({ success: false, message: "สมัครไม่สำเร็จ" });
+      conn.query(
+        "INSERT INTO users (username, first_name, last_name, password) VALUES (?, ?, ?, ?)",
+        [username, first_name, last_name, hashedPassword],
+        (err2) => {
+          if (err2) {
+            console.error(err2);
+            return res.status(500).json({ success: false, message: "สมัครไม่สำเร็จ" });
+          }
+
+          res.json({ success: true, redirect: "/login.html" });
         }
-
-        res.json({ success: true, redirect: "/login.html" });
-      }
-    );
+      );
+    } catch (hashError) {
+      console.error(hashError);
+      res.status(500).json({ success: false, message: "เกิดข้อผิดพลาดในการเข้ารหัสรหัสผ่าน" });
+    }
   });
 });
+
 
 // โหลดหน้า froms.html (ชื่อฟอร์มจอง)
 app.get("/forms", (req, res) => {
